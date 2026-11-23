@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokSave - Free TikTok Video Downloader</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary: #fe2c55;
+            --secondary: #25f4ee;
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --input-bg: #2d2d2d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(45deg, var(--primary) 30%, var(--secondary) 70%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        main {
+            width: 100%;
+            max-width: 600px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .downloader-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid #2a2a2a;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            background-color: var(--input-bg);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .download-btn {
+            background: linear-gradient(90deg, var(--primary), #d62447);
+            color: var(--text);
+            border: none;
+            padding: 16px 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 12px rgba(254, 44, 85, 0.3);
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+
+        .download-btn:active {
+            transform: scale(0.98);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .feature-item {
+            background-color: rgba(255, 255, 255, 0.03);
+            padding: 15px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .feature-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .feature-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .status-success { color: var(--secondary); }
+        .status-error { color: var(--primary); }
+        .status-loading { color: var(--text-muted); }
+
+        footer {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 480px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .logo {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">TokSave</div>
+        <p class="tagline">Download TikTok videos without watermark instantly</p>
+    </header>
+
+    <main>
+        <div class="downloader-card">
+            <form id="downloadForm" onsubmit="handleDownload(event)">
+                <div class="input-group">
+                    <label for="videoUrl">Paste TikTok Video Link</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="videoUrl" 
+                            placeholder="https://tiktok.com..." 
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button type="submit" class="download-btn">Get Video</button>
+                </div>
+            </form>
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">✨</div>
+                <div class="feature-title">No Watermark</div>
+                <div class="feature-desc">Clean HD files</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Fast Loading</div>
+                <div class="feature-desc">Instant processing</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-title">Secure & Free</div>
+                <div class="feature-desc">No login required</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TokSave. Educational mockup interface.</p>
+    </footer>
+
+    <script>
+        function handleDownload(event) {
+            event.preventDefault();
+            const urlInput = document.getElementById('videoUrl').value.trim();
+            const statusDiv = document.getElementById('statusMessage');
+
+            if (!urlInput) {
+                showStatus('Please enter a valid link.', 'error');
+                return;
+            }
+
+            if (!urlInput.includes('tiktok.com')) {
+                showStatus('Invalid link. Please provide a valid TikTok URL.', 'error');
+                return;
+            }
+
+            showStatus('Processing your link...', 'loading');
+
+            // Add your API endpoint logic here to trigger downstream download data processing
+            setTimeout(() => {
+                showStatus('Interface setup complete. Hook this logic up to your API endpoint to fetch downloads.', 'success');
+            }, 1500);
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message';
+            
+            if (type === 'error') statusDiv.classList.add('status-error');
+            if (type === 'success') statusDiv.classList.add('status-success');
+            if (type === 'loading') statusDiv.classList.add('status-loading');
+        }
+    </script>
+</body>
+</html>
